@@ -1,5 +1,6 @@
-import React from 'react'
-import TodoApp from './Component/TodoApp'
+import React from "react";
+import TodoApp from "./Component/TodoApp";
+// import Pagination from "./Component/Pagination";
 
 const App = () => {
   return (
@@ -7,7 +8,7 @@ const App = () => {
       <TodoApp></TodoApp>
 
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

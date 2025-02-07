@@ -5,6 +5,8 @@ const TodoApp = () => {
   const [input, setInput] = useState("");
   const [edit, setEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosPerPage, setTodosPerPage] = useState(5);
 
   function Todo(e) {
     e.preventDefault();
@@ -31,9 +33,23 @@ const TodoApp = () => {
 
   const deleteTodo = (index) => {
     if (index !== null) {
-      let delTodo = todos.filter((_, i) => i !== index)
+      let delTodo = todos.filter((_, i) => i !== index);
       setTodos(delTodo);
     }
+  };
+
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastTodo = currentPage * todosPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+  const currentTodos = todos.slice(indexOfFirstTodo, indexOfLastTodo);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(todos.length / todosPerPage); i++) {
+    pageNumbers.push(i);
   }
 
   return (
@@ -61,7 +77,7 @@ const TodoApp = () => {
 
         <div>
           <h1 className="app-heading"> Todo List</h1> <hr />
-          {todos.map((task, index) => (
+          {currentTodos.map((task, index) => (
             <ul key={index} className="list-item">
               <li>{task}</li>
               <li className="btn-click">
@@ -77,8 +93,26 @@ const TodoApp = () => {
             </ul>
           ))}
         </div>
+        <div>
+        <ul>
+       
+      </ul>
+      <div className="pragination-btn">
+        <ul className="pagination">
+          {pageNumbers.map((pageNumber) => (
+            <li key={pageNumber}>
+              <button
+                onClick={() => handlePageChange(pageNumber)}
+                className={currentPage === pageNumber ? "active" : ""}
+              >
+                {pageNumber}
+              </button>
+            </li>
+          ))}
+        </ul></div>
       </div>
     </div>
+        </div>
   );
 };
 
