@@ -12,8 +12,8 @@ body {
   height: 100vh;
 }
 .center-container {
-  height: 500px;
-  width: 350px;
+  height: 800px;
+  width: 650px;
   padding: 30px 50px;
   border-radius: 20px;
   border: 2px solid rgb(255, 255, 255);
@@ -21,12 +21,27 @@ body {
   overflow: auto;
   position: relative;
 }
+
+.main-heading{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
 .app-heading {
   padding: 5px;
   color: white;
   text-align: center;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   text-transform: uppercase;
+}
+.main-heading form input, button{
+  padding: 5px 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  margin-left: 20px;
 }
 .input-container {
   display: flex;

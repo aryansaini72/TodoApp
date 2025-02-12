@@ -7,6 +7,8 @@ const TodoApp = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [todosPerPage, setTodosPerPage] = useState(5);
+  const [search, setSearch] = useState("");
+  const [filteredTodos, setFilteredTodos] = useState([]);
 
   function Todo(e) {
     e.preventDefault();
@@ -38,24 +40,49 @@ const TodoApp = () => {
     }
   };
 
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   const indexOfLastTodo = currentPage * todosPerPage;
   const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
-  const currentTodos = todos.slice(indexOfFirstTodo, indexOfLastTodo);
+  const currentTodos = search
+    ? filteredTodos.slice(indexOfFirstTodo, indexOfLastTodo)
+    : todos.slice(indexOfFirstTodo, indexOfLastTodo);
+
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(todos.length / todosPerPage); i++) {
     pageNumbers.push(i);
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const filteredTodo = todos.filter((todo) =>
+      todo.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredTodos(filteredTodo);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <div className="main-container">
       <div className="center-container">
+        <div className="main-heading">
         <h1 className="app-heading">Todo App</h1>
+        <form onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search Todo"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <button type="submit">Search</button>
+        </form>
+</div>
         <div className="input-container">
           <input
             type="text"
@@ -77,42 +104,40 @@ const TodoApp = () => {
 
         <div>
           <h1 className="app-heading"> Todo List</h1> <hr />
-          {currentTodos.map((task, index) => (
-            <ul key={index} className="list-item">
-              <li>{task}</li>
-              <li className="btn-click">
-                <i
-                  onClick={() => startEditTodo(index)}
-                  class="fa-solid fa-pen-to-square"
-                ></i>
-                <i
-                  onClick={() => deleteTodo(index)}
-                  className="fa-solid fa-trash-can icon-delete"
-                ></i>
-              </li>
-            </ul>
-          ))}
+          { currentTodos.map((task, index) => (
+                <ul key={index} className="list-item">
+                  <li>{task}</li>
+                  <li className="btn-click">
+                    <i
+                      onClick={() => startEditTodo(index)}
+                      class="fa-solid fa-pen-to-square"
+                    ></i>
+                    <i
+                      onClick={() => deleteTodo(index)}
+                      className="fa-solid fa-trash-can icon-delete"
+                    ></i>
+                  </li>
+                </ul>
+              ))}
         </div>
         <div>
-        <ul>
-       
-      </ul>
-      <div className="pragination-btn">
-        <ul className="pagination">
-          {pageNumbers.map((pageNumber) => (
-            <li key={pageNumber}>
-              <button
-                onClick={() => handlePageChange(pageNumber)}
-                className={currentPage === pageNumber ? "active" : ""}
-              >
-                {pageNumber}
-              </button>
-            </li>
-          ))}
-        </ul></div>
+          <div className="pragination-btn">
+            <ul className="pagination">
+              {pageNumbers.map((pageNumber) => (
+                <li key={pageNumber}>
+                  <button
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={currentPage === pageNumber ? "active" : ""}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-        </div>
   );
 };
 
