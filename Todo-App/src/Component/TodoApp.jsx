@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TodoApp = () => {
-  const [todos, setTodos] = useState([]);
+  // const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
   const [edit, setEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [todosPerPage, setTodosPerPage] = useState(5);
+  const [todosPerPage, setTodosPerPage] = useState(7);
   const [search, setSearch] = useState("");
   const [filteredTodos, setFilteredTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const storedtodos = localStorage.getItem("todos");
+    return storedtodos ? JSON.parse(storedtodos) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   function Todo(e) {
     e.preventDefault();
@@ -19,10 +27,12 @@ const TodoApp = () => {
   }
 
   const startEditTodo = (index) => {
+    const todoIndex = (currentPage - 1) * todosPerPage + index;
     setEdit(true);
-    setEditIndex(index);
-    setInput(todos[index]);
+    setEditIndex(todoIndex);
+    setInput(todos[todoIndex]);
   };
+
   const saveEditTodo = () => {
     if (input && editIndex !== null) {
       let updateTodo = todos.map((todo, i) => (i === editIndex ? input : todo));
@@ -34,28 +44,15 @@ const TodoApp = () => {
   };
 
   const deleteTodo = (index) => {
-    if (index !== null) {
-      let delTodo = todos.filter((_, i) => i !== index);
+    const todoIndex = (currentPage - 1) * todosPerPage + index;
+      let delTodo = todos.filter((_, i) => i !== todoIndex);
       setTodos(delTodo);
-    }
+
   };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
-  const indexOfLastTodo = currentPage * todosPerPage;
-  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
-  const currentTodos = search
-    ? filteredTodos.slice(indexOfFirstTodo, indexOfLastTodo)
-    : todos.slice(indexOfFirstTodo, indexOfLastTodo);
-
-
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(todos.length / todosPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
   const handleSearch = (e) => {
     e.preventDefault();
     const filteredTodo = todos.filter((todo) =>
@@ -64,25 +61,32 @@ const TodoApp = () => {
     setFilteredTodos(filteredTodo);
   };
 
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-  };
+  const indexOfLastTodo = currentPage * todosPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+  const currentTodos = search
+    ? filteredTodos.slice(indexOfFirstTodo, indexOfLastTodo)
+    : todos.slice(indexOfFirstTodo, indexOfLastTodo);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(todos.length / todosPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="main-container">
       <div className="center-container">
         <div className="main-heading">
-        <h1 className="app-heading">Todo App</h1>
-        <form onSubmit={handleSearch}>
-          <input
-            type="text"
-            placeholder="Search Todo"
-            value={search}
-            onChange={handleSearchChange}
-          />
-          <button type="submit">Search</button>
-        </form>
-</div>
+          <h1 className="app-heading">Todo App</h1>
+          <form onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Search Todo"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {/* <button type="submit">Search</button> */}
+          </form>
+        </div>
         <div className="input-container">
           <input
             type="text"
@@ -104,21 +108,21 @@ const TodoApp = () => {
 
         <div>
           <h1 className="app-heading"> Todo List</h1> <hr />
-          { currentTodos.map((task, index) => (
-                <ul key={index} className="list-item">
-                  <li>{task}</li>
-                  <li className="btn-click">
-                    <i
-                      onClick={() => startEditTodo(index)}
-                      class="fa-solid fa-pen-to-square"
-                    ></i>
-                    <i
-                      onClick={() => deleteTodo(index)}
-                      className="fa-solid fa-trash-can icon-delete"
-                    ></i>
-                  </li>
-                </ul>
-              ))}
+          {currentTodos.map((task, index) => (
+            <ul key={index} className="list-item">
+              <li>{task}</li>
+              <li className="btn-click">
+                <i
+                  onClick={() => startEditTodo(index)}
+                  class="fa-solid fa-pen-to-square"
+                ></i>
+                <i
+                  onClick={() => deleteTodo(index)}
+                  className="fa-solid fa-trash-can icon-delete"
+                ></i>
+              </li>
+            </ul>
+          ))}
         </div>
         <div>
           <div className="pragination-btn">
